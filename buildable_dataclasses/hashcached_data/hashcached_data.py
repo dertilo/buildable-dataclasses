@@ -3,7 +3,7 @@ import shutil
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field, fields
 from pathlib import Path
-from typing import ClassVar
+from typing import Any, ClassVar, cast
 
 from misc_python_utils.beartypes import Dataclass
 from misc_python_utils.dataclass_utils import all_undefined_must_be_filled
@@ -41,25 +41,17 @@ def _check_that_loading_went_well(dc: Dataclass, loaded_dc: Dataclass) -> None:
     currently only checks that hashes match, hashes ignore "state-fields"!!
     """
     if hash_dataclass(dc) != hash_dataclass(loaded_dc):
-        write_json("loaded_dc.json", encode_dataclass(loaded_dc))
-        write_json("self_dc.json", encode_dataclass(dc))
+        write_json("loaded_dc.json", cast(dict[str, Any], encode_dataclass(loaded_dc)))
+        write_json(
+            "self_dc.json",
+            cast(dict[str, Any], encode_dataclass(dc)),
+        )  # casting to make pyright happy
         msg = (
             "icdiff <(cat loaded_dc.json | jq . ) <(cat self_dc.json | jq . ) | less -r"
         )
         raise AssertionError(
             msg,
         )
-
-
-def create_cache_dir_with_hash_suffix(
-    self: Dataclass,
-    cache_base: PrefixSuffix,
-) -> PrefixSuffix:
-    all_undefined_must_be_filled(self, extra_field_names=["name"])
-    return PrefixSuffix(
-        prefix_key=cache_base.prefix_key,
-        suffix=f"{cache_base.suffix}/{type(self).__name__}-{self.name.replace('/', '_')}{hash_dataclass(self)}",
-    )
 
 
 @dataclass(kw_only=True)
@@ -70,6 +62,8 @@ class HashCachedData(Buildable, ABC):
     use this for short-lived "cache" only!
     for long-lived data better simply use Buildable + is_ready for checking validity of data
     long-lived data: you don't want/need different versions, use_hash_suffix=False!
+    # TODO: this hash-cached code is coupled very (way too) tightly to nested-dataclass-serialization!
+
     """
 
     # str for backward compatibility
@@ -118,7 +112,7 @@ class HashCachedData(Buildable, ABC):
 
     @abstractmethod
     def _build_cache(self) -> None:
-        raise NotImplementedError
+        ...
 
     def _build_self(self) -> None:
         all_undefined_must_be_filled(self)
@@ -129,7 +123,8 @@ class HashCachedData(Buildable, ABC):
         Path(cadi).mkdir(parents=True)
         try:
             self._build_cache()
-            write_json(self.dataclass_json, encode_dataclass(self), do_flush=True)
+            dct = encode_dataclass(self)
+            write_json(self.dataclass_json, cast(dict[str, Any], dct), do_flush=True)
         except Exception:
             if self.clean_on_fail:
                 shutil.rmtree(cadi, ignore_errors=True)  # should not raise an error
@@ -158,3 +153,14 @@ class HashCachedData(Buildable, ABC):
         for f in repr_fields:
             setattr(self, f.name, getattr(loaded_dc, f.name))
         _check_that_loading_went_well(self, loaded_dc)
+
+
+def create_cache_dir_with_hash_suffix(
+    self: HashCachedData,
+    cache_base: PrefixSuffix,
+) -> PrefixSuffix:
+    all_undefined_must_be_filled(self, extra_field_names=["name"])
+    return PrefixSuffix(
+        prefix_key=cache_base.prefix_key,
+        suffix=f"{cache_base.suffix}/{type(self).__name__}-{self.name.replace('/', '_')}{hash_dataclass(self)}",
+    )
