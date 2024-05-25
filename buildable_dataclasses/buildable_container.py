@@ -2,10 +2,7 @@ from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from typing import ClassVar, TypeVar
 
-from misc_python_utils.buildable_dataclasses.buildable import (
-    Buildable,
-    BuildableBehavior,
-)
+from buildable_dataclasses.buildable import Buildable, BuildableBehavior
 
 TBuildableContainer = TypeVar("TBuildableContainer", bound="BuildableContainer")
 

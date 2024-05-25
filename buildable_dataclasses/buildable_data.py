@@ -6,13 +6,7 @@ from pathlib import Path
 from typing import Annotated, ClassVar, TypeVar
 
 from beartype.vale import Is
-from slugify import slugify
-
 from misc_python_utils.beartypes import NeStr
-from misc_python_utils.buildable_dataclasses.buildable import (
-    Buildable,
-    BuildableBehavior,
-)
 from misc_python_utils.file_utils.readwrite_files import read_jsonl, write_jsonl
 from misc_python_utils.prefix_suffix import PrefixSuffix
 from misc_python_utils.slugifycation import (
@@ -20,6 +14,9 @@ from misc_python_utils.slugifycation import (
     slugify_en_only,
     slugify_with_underscores,
 )
+from slugify import slugify
+
+from buildable_dataclasses.buildable import Buildable, BuildableBehavior
 
 logger = logging.getLogger(
     __name__,

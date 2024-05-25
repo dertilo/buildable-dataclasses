@@ -13,6 +13,7 @@ packages = [{ include = "buildable_dataclasses" }]
 python = "^3.10"
 beartype = "^0" # blindly trust beartype
 nested-dataclass-serialization = "^0.1.0"
+misc-python-utils = "^0.1.0"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.2"
