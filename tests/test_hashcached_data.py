@@ -2,8 +2,9 @@ import tempfile
 from dataclasses import dataclass, field
 from typing import ClassVar
 
-from misc_python_utils.hashcached_data.hashcached_data import HashCachedData
 from misc_python_utils.prefix_suffix import BASE_PATHES, PrefixSuffix
+
+from buildable_dataclasses.hashcached_data.hashcached_data import HashCachedData
 
 DEFAULT = "<DEFAULT>"
 
@@ -23,10 +24,7 @@ class TestData(HashCachedData):
         default=DEFAULT,
     )
     __exclude_from_hash__: ClassVar[list[str]] = ["excluded_from_hash_but_still_cached"]
-
-    @property
-    def name(self):  # noqa: ANN201
-        return "test"
+    name: str = field(init=False, default="test")
 
     def _build_cache(self):  # noqa: ANN202
         self.non_init_get_cached = dummy_codebase(self.test_field)
@@ -43,7 +41,8 @@ VALUE_A = "value-A"
 VALUE_B = "value-B"
 
 
-def test_hash_cached_data():  # noqa: ANN201
+def test_hash_cached_data() -> None:
+    # TODO: this hash-cached code is coupled very (way too) tightly to nested-dataclass-serialization!
     global CODE_BASE_STATE  # noqa: PLW0603
     processed_by_A = dummy_process_fun("A", "bar")
 

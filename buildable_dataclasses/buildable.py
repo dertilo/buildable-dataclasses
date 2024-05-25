@@ -6,12 +6,11 @@ from dataclasses import dataclass, fields
 from time import time
 from typing import ClassVar, Generic, TypeVar, final
 
-from typing_extensions import Self
-
 from misc_python_utils.dataclass_utils import (
     MaybeEnforcedSlots,
     all_undefined_must_be_filled,
 )
+from typing_extensions import Self
 
 logger = logging.getLogger(
     __name__,

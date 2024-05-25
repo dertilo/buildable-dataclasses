@@ -1,10 +1,9 @@
 from dataclasses import dataclass, field
 
-from misc_python_utils.buildable_dataclasses.buildable import Buildable
-from misc_python_utils.buildable_dataclasses.buildable_container import (
-    BuildableContainer,
-)
 from misc_python_utils.dataclass_utils import UNDEFINED, Undefined
+
+from buildable_dataclasses.buildable import Buildable
+from buildable_dataclasses.buildable_container import BuildableContainer
 
 EXPECTED_STATE = "hello"
 

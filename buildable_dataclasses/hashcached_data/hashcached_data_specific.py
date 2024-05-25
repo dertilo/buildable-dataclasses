@@ -3,18 +3,18 @@ from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from typing import ClassVar, TypeVar
 
-from nested_dataclass_serialization.dataclass_serialization import (
-    deserialize_dataclass,
-    encode_dataclass,
-)
-
 from misc_python_utils.file_utils.readwrite_csv_files import write_dicts_to_csv
 from misc_python_utils.file_utils.readwrite_files import (
     read_jsonl,
     read_lines,
     write_jsonl,
 )
-from misc_python_utils.hashcached_data.hashcached_data import HashCachedData
+from nested_dataclass_serialization.dataclass_serialization import (
+    deserialize_dataclass,
+    encode_dataclass,
+)
+
+from buildable_dataclasses.hashcached_data.hashcached_data import HashCachedData
 
 T = TypeVar("T")
 
