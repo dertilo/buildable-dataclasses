@@ -9,11 +9,7 @@ from beartype.vale import Is
 from misc_python_utils.beartypes import NeStr
 from misc_python_utils.file_utils.readwrite_files import read_jsonl, write_jsonl
 from misc_python_utils.prefix_suffix import PrefixSuffix
-from misc_python_utils.slugifycation import (
-    slugify_cased_en_only,
-    slugify_en_only,
-    slugify_with_underscores,
-)
+from misc_python_utils.slugification import CasedNameSlug
 from slugify import slugify
 
 from buildable_dataclasses.buildable import Buildable, BuildableBehavior
@@ -21,10 +17,6 @@ from buildable_dataclasses.buildable import Buildable, BuildableBehavior
 logger = logging.getLogger(
     __name__,
 )  # "The name is potentially a period-separated hierarchical", see: https://docs.python.org/3.10/library/logging.html
-
-SlugStr = Annotated[NeStr, Is[lambda s: slugify_with_underscores(s) == s]]
-NameSlug = Annotated[NeStr, Is[lambda s: slugify_en_only(s) == s]]
-CasedNameSlug = Annotated[NeStr, Is[lambda s: slugify_cased_en_only(s) == s]]
 
 
 def is_cased_sluggy(s: NeStr) -> bool:

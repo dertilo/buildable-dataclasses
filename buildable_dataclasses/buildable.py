@@ -28,6 +28,10 @@ TBuildable = TypeVar("TBuildable", bound="Buildable")
 
 
 class BuildableBehavior(ABC, Generic[TBuildable]):
+    """
+    there is some recursion between the buildable and the buildable-behavior that drives pyright mad
+    """
+
     @classmethod
     @abstractmethod
     def it_is_ready(cls, obj: TBuildable) -> bool:
@@ -39,7 +43,7 @@ class BuildableBehavior(ABC, Generic[TBuildable]):
 
 
 @dataclass
-class DefaultBuildableBehavior(BuildableBehavior):
+class DefaultBuildableBehavior(BuildableBehavior[TBuildable]):
     def it_is_ready(self, obj: TBuildable) -> bool:
         return obj._was_built  # noqa: SLF001
 

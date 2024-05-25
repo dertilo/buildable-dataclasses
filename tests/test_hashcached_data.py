@@ -26,7 +26,7 @@ class TestData(HashCachedData):
     __exclude_from_hash__: ClassVar[list[str]] = ["excluded_from_hash_but_still_cached"]
     name: str = field(init=False, default="test")
 
-    def _build_cache(self):  # noqa: ANN202
+    def _build_cache(self) -> None:
         self.non_init_get_cached = dummy_codebase(self.test_field)
         self._with_underscore_is_not_cached = dummy_codebase(self.test_field)
         self.non_repr_not_cached = dummy_codebase(self.test_field)
@@ -85,10 +85,10 @@ def test_hash_cached_data() -> None:
         )  # exlcuded but still cached! when loading VALUE_B gets overwritten!
 
 
-def dummy_codebase(inpt):  # noqa: ANN001, ANN201
+def dummy_codebase(inpt: str) -> str:
     global CODE_BASE_STATE  # noqa: PLW0602
     return dummy_process_fun(CODE_BASE_STATE, inpt)
 
 
-def dummy_process_fun(code_base_state: str, inpt: str):  # noqa: ANN201
+def dummy_process_fun(code_base_state: str, inpt: str) -> str:
     return f"{code_base_state}-{inpt}"
