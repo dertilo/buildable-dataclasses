@@ -18,7 +18,7 @@ foobar["FooBar"] --> | depends-on | dependency-b["AnotherThing"]
 ### DAG declared via `Buildable`-dataclasses (foobar-example)
 ```python
 @dataclass
-class Foobar(Buildable):
+class FooBar(Buildable):
     dependency_a: NeededData # another buildable dataclass
     dependency_b: AnotherThing # yet another buildable dataclass
     
@@ -27,7 +27,7 @@ class Foobar(Buildable):
     def _build_self(self):
         self.some_result=some_fancy_processing(self.dependency_a, self.dependency_b)
     
-data=Foobar(NeededData(), AnotherThing())
+data=FooBar(NeededData(), AnotherThing())
 data.build() # first builds the dependencies then the dataclass itself (_build_self)
 ```
 - everything is happening in memory, what about writing results to disk?
@@ -36,7 +36,7 @@ data.build() # first builds the dependencies then the dataclass itself (_build_s
 - writing processed data to disk (or S3/wherever)
 ```python
 @dataclass
-class FoobarData(BuildableData):
+class FooBarData(BuildableData):
     dependency_a: NeededData
     dependency_b: AnotherThing
 
@@ -55,10 +55,10 @@ class FoobarData(BuildableData):
     def example_reading_method(self)->ProcessedData:
         return read(self.processed_data_file)
 
-data=Foobar(NeededData(), AnotherThing())
+data=FooBarData(NeededData(), AnotherThing())
 data.build() #  processes data and writes it to disk
 # in another python-process or another day
-probably_already_processed=Foobar(NeededData(), AnotherThing())
+probably_already_processed=FooBarData(NeededData(), AnotherThing())
 probably_already_processed.build() # does NOT reprocess your data cause "is_data_valid" returns True
 my_data=data.example_reading_method() 
 ```
