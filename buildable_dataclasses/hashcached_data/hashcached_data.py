@@ -9,6 +9,7 @@ from misc_python_utils.beartypes import Dataclass
 from misc_python_utils.dataclass_utils import all_undefined_must_be_filled
 from misc_python_utils.file_utils.readwrite_files import read_file, write_json
 from misc_python_utils.prefix_suffix import PrefixSuffix
+from misc_python_utils.slugification import CasedNameSlug
 from misc_python_utils.utils import Singleton
 from nested_dataclass_serialization.dataclass_hashing import hash_dataclass
 from nested_dataclass_serialization.dataclass_serialization import (
@@ -17,7 +18,6 @@ from nested_dataclass_serialization.dataclass_serialization import (
 )
 
 from buildable_dataclasses.buildable import Buildable
-from buildable_dataclasses.buildable_data import CasedNameSlug
 
 
 @dataclass(frozen=True, slots=True)

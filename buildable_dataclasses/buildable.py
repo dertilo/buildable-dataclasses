@@ -1,7 +1,6 @@
 import dataclasses
 import logging
 from abc import ABC, abstractmethod
-from collections import namedtuple
 from dataclasses import dataclass, fields
 from time import time
 from typing import ClassVar, Generic, TypeVar, final
@@ -51,7 +50,10 @@ class DefaultBuildableBehavior(BuildableBehavior[TBuildable]):
         pass
 
 
-NamedChild = namedtuple("NamedChild", "name child")  # noqa: PYI024
+@dataclass
+class NamedDependency:
+    name: str
+    dependency: TBuildable
 
 
 @dataclass(kw_only=True)
@@ -69,7 +71,7 @@ class Buildable(MaybeEnforcedSlots):
     if the buildable-object "_is_ready" then it does NOT build any children and also not itself!
     """
 
-    buildable_behavior: ClassVar[BuildableBehavior] = DefaultBuildableBehavior()
+    buildable_behavior: ClassVar[BuildableBehavior[Self]] = DefaultBuildableBehavior()
 
     _was_built: bool = dataclasses.field(default=False, init=False, repr=False)
     __serialize_anyhow__: ClassVar[set[str]] = {
@@ -89,7 +91,7 @@ class Buildable(MaybeEnforcedSlots):
         """
         if not self._is_ready:
             all_undefined_must_be_filled(self)
-            self._build_all_children()
+            self._build_all_dependencies()
             start = time()
             self._build_self()
             self._was_built = True
@@ -104,19 +106,22 @@ class Buildable(MaybeEnforcedSlots):
             self._was_built = True  # being ready is as good as being built
         return self
 
-    def _build_all_children(self) -> None:
-        for nc in self.children:
+    @final
+    def _build_all_dependencies(self) -> None:
+        for nc in self._get_buildable_dependencies():
             setattr(
                 self,
                 nc.name,
-                nc.child.build(),
-            )  # this potentially allows shape-shifting!
+                nc.dependency.build(),  # this potentially allows shape-shifting!
+            )
 
-    @property
-    def children(self) -> list[NamedChild]:
+    @final
+    def _get_buildable_dependencies(self) -> list[NamedDependency]:
         objects = ((f.name, getattr(self, f.name)) for f in fields(self) if f.init)
         return [
-            NamedChild(name, obj) for name, obj in objects if isinstance(obj, Buildable)
+            NamedDependency(name, obj)
+            for name, obj in objects
+            if isinstance(obj, Buildable)
         ]
 
     def _build_self(self) -> None:
