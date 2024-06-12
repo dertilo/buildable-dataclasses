@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "buildable-dataclasses"
 version = "0.0.0" # see: https://pypi.org/project/poetry-dynamic-versioning/
-description = ""
+description = "batch-processing pipelines (DAG) via nested dataclasses"
 authors = ["Tilo Himmelsbach <dertilo@gmail.com>"]
 repository = "https://github.com/dertilo/buildable-dataclasses"
+license = "MIT"
 
 readme = "README.md"
 packages = [{ include = "buildable_dataclasses" }]
