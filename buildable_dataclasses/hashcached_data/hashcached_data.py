@@ -97,7 +97,7 @@ class HashCachedData(Buildable, ABC):
         return is_ready
 
     def _found_and_loaded_from_cache(self) -> bool:
-        self.cache_dir = create_cache_dir_with_hash_suffix(self, self.cache_base)
+        self.cache_dir = self.create_cache_dir_with_hash_suffix(self.cache_base)
         if self.overwrite_cache:
             remove_if_exists(str(self.cache_dir))
             successfully_loaded_cached = False
@@ -155,12 +155,12 @@ class HashCachedData(Buildable, ABC):
         _check_that_loading_went_well(self, loaded_dc)
 
 
-def create_cache_dir_with_hash_suffix(
-    self: HashCachedData,
-    cache_base: PrefixSuffix,
-) -> PrefixSuffix:
-    all_undefined_must_be_filled(self, extra_field_names=["name"])
-    return PrefixSuffix(
-        prefix_key=cache_base.prefix_key,
-        suffix=f"{cache_base.suffix}/{type(self).__name__}-{self.name.replace('/', '_')}{hash_dataclass(self)}",
-    )
+    def create_cache_dir_with_hash_suffix(
+        self,
+        cache_base: PrefixSuffix,
+    ) -> PrefixSuffix:
+        all_undefined_must_be_filled(self, extra_field_names=["name"])
+        return PrefixSuffix(
+            prefix_key=cache_base.prefix_key,
+            suffix=f"{cache_base.suffix}/{type(self).__name__}-{self.name.replace('/', '_')}{hash_dataclass(self)}",
+        )

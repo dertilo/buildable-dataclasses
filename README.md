@@ -62,3 +62,5 @@ probably_already_processed=FooBarData(NeededData(), AnotherThing())
 probably_already_processed.build() # does NOT reprocess your data cause "is_data_valid" returns True
 my_data=data.example_reading_method() 
 ```
+- for documentation and reproducibility purposes one can (de)serialize deeply nested dataclasses into a single json-file
+  - for example [this dataclass.json](https://github.com/SELMA-project/ml4audio/blob/780a4216b11f2024115f2d3c9386783fd1d19448/fastapi-asr-service/readme.md#dataclass-json) documents some statistics about the train-data that was used for fine-tuning the model
